@@ -7,6 +7,11 @@
     <div class="navbar-items" v-if="store.state.account.address">
       <router-link to="/account" class="navbar-item">Account</router-link>
     </div>
+
+    <ul id="nav-mobile" class="right hide-on-med-and-down" v-if="store.state.account.address">
+  
+        <li id="disconnect-nav"><a @click="disconnect">Disconnect</a></li>
+    </ul>
   </nav>
   <router-view />
 </template>
@@ -20,6 +25,13 @@ export default defineComponent({
   setup() {
     const store = useStore()
     return { store }
+  },
+  methods: {
+    async disconnect() {
+      this.store.dispatch('ethereumDisconnect').then(
+        () => this.$router.push({ name: "LogIn" })
+      )
+    },
   },
 })
 </script>

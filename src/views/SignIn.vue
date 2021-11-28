@@ -17,14 +17,7 @@
     </card>
     <spacer :size="24" />
     <div class="home">
-      <card
-        v-for="(link, index) in links"
-        :key="index"
-        :title="link.title"
-        subtitle="To never be lost"
-      >
-        <a class="card-body" :href="link.link"> Find it here </a>
-      </card>
+
     </div>
   </div>
 </template>

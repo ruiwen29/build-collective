@@ -1,83 +1,53 @@
 <template lang="html">
-  <div class="home-wrapper" v-if="account">
+   <transition name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container" >
+          <div class="modal-header">
+            <h2>Enter the number you want to withdraw</h2>
+          </div>
+
+          <div class="modal-body">
+             <div class="home-wrapper" v-if="account">
     <card
       :title="`Welcome ${account.username} `"
       subtitle="Account Information"
       :gradient="true"
     >
       <div class="explanations">
-        <p><b> Account ID: </b>{{ account.username }}</p>
-        <p><b>ETH Balance: </b>{{ (account.balance/1000000000000000000)  }} </p>
+        <p><b>Name of Account: </b>{{ account.username }}</p>
+        <p><b>Address: </b>{{ address }}</p>
+        <p><b>ETH Balance: </b>{{ (account.balance/1000000000000000000)  }} Tokens</p>
       </div>
- 
+            <div class="input-field">
 
-      <p>
-        <a href="#" style="color: white" class="card-body" @click="showModalDeposit = true">
-          DEPOSIT ETH
-        </a>
-      </p>
-      <Deposit
-        :account="this.account"
-        v-if="showModalDeposit"
-        @close="showModalDeposit = false; updateAccount()"
-      >
-      </Deposit>
-        
-      <p>
-        <a href="#" style="color: white" class="card-body" @click="showModalWithDraw = true">
-          WITHDRAW ETH
-        </a>
-      </p>
-      <Withdraw
-        :account="this.account"
-        v-if="showModalWithDraw"
-        @close="showModalWithDraw = false; updateAccount()"
-      >
-      </Withdraw>
-
-
+            <div style="margin:0 auto" align=center>
+                <p>
+                <label for="withdraw">Enter the number you want to withdraw</label></p>
+              <input 
+                id="withdraw"
+                type="text"
+                v-model="withdraw"
+              />
+            </div>
+            </div>
     </card>
-    
-
-    <div class="home">
-      <card
-        title="Entreprise Information"
-        subtitle="Exploration of the entreprise"
-        :blue="true"
-      >
-        <router-link class="card-body" to="/Entreprise">
-          Check enterprises
-        </router-link>
-      </card>
-      <card
-        title="Projects Information"
-        subtitle="Exploration of projects created"
-        :blue="true"
-      >
-        <router-link class="card-body" to="/Projects">
-          Check projects
-        </router-link>
-      </card>
-
     </div>
-  </div>
-  <div class="signUp" v-else>
-    <form @submit.prevent="signUp">
-      <card
-        title="Create an user account"
-        subtitle="With a name and a balance of tokens"
-      >
-        <input
-          type="text"
-          class="input-username"
-          v-model="username"
-          placeholder="Username"
-        />
+          </div>
 
-        <button type="submit" class="input-username">Submit</button>
-      </card>
-    </form>
-  </div>
+          <div class="modal-footer">
+            <button class="modal-default-button" @click="this.$emit('close')">
+              Cancel
+            </button>
+            <button class="modal-default-button" @click="sendWithdraw">
+              Valide
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+ 
 </template>
 
 <script lang="ts">
@@ -85,14 +55,12 @@ import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
 import Card from '@/components/Card.vue'
 import Web3 from 'web3'
-import Deposit from '@/components/DepositCard.vue'
-import Withdraw from '@/components/WithdrawCard.vue'
 
 
 
 export default defineComponent({
   name: 'Account',
-  components: {  Card,Deposit,Withdraw },
+  components: {  Card },
   setup() {
     const store = useStore()
     const address = computed(() => store.state.account.address)
@@ -110,8 +78,6 @@ export default defineComponent({
     const userBalance = ''
     const deposit = ''
     const withdraw = ''
-    const showModalDeposit = false
-    const showModalWithDraw = false
 
     return {
       deposit,
@@ -119,8 +85,8 @@ export default defineComponent({
       account,
       username,
       userBalance,
-      showModalDeposit,
-      showModalWithDraw,
+      
+
     }
   },
   
@@ -134,13 +100,18 @@ export default defineComponent({
 
 
     async signUp() {
-      const { contract, username } = this
+      const { contract, username, userBalance } = this
       const name = username.trim().replace(/ /g, '_')
-      await contract.methods.signUp(name).send()
+      await contract.methods.signUp(name, userBalance).send()
       await this.updateAccount()
       this.username = ''
     },
-
+    async addTokens() {
+      const { contract } = this
+      await contract.methods.addBalance(200).send()
+      await this.updateAccount()
+    },
+    
       async sendWithdraw() {
       const withdrawValue = Web3.utils.toWei(this.withdraw, 'ether')
       if (!withdrawValue) {
@@ -249,4 +220,15 @@ export default defineComponent({
   font-family: inherit;
   font-size: 1.3rem;
 }
+.modal-container {
+    padding:9px 15px;
+    border-bottom:1px solid #eee;
+    background-color: #29052e;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+     border-top-left-radius: 5px;
+     border-top-right-radius: 5px;
+ }
 </style>

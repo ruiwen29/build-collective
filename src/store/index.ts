@@ -8,14 +8,18 @@ export default createStore({
       address: null,
       balance: 0,
     },
+
   },
+  
   mutations: {
     updateEthereum(state, { address, contract, balance }) {
       state.account.address = address
       state.account.balance = balance
       state.contract = contract
-    },
+    },    
+
   },
+  
   actions: {
     async ethereumConnect(context) {
       const response = await Ethereum.connect()
@@ -24,6 +28,10 @@ export default createStore({
         context.commit('updateEthereum', { address, contract, balance })
       }
     },
+    async ethereumDisconnect(context) {
+      context.commit('updateEthereum', { address: null, contract: null, balance: 0 })
+    },
   },
+  
   modules: {},
 })
