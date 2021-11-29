@@ -1,3 +1,20 @@
+# Functionalities of this APP
+## Use ETH as the currency
+Once users create a account, they must deposit some ETH in order to use other functionalities such as sponsor, create bounties etc
+
+## User can create entreprise account
+Entreprise can be a account including some of users accounts.
+
+## User can create projects
+Projects can be created by user or entreprise account.
+
+## User can sponsor projects
+User can sponsor projects with their ETH balance, it will be store in project's balance.
+
+## User can create bouties
+User can create bouties with their ETH balance, once the bouties are fixed , this amont of ETH will be in the fixer account.
+
+
 # Build Collective
 
 Welcome to the DAAR project. The idea will be to implement an OpenCollective competitor
